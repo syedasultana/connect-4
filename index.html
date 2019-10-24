@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Mocha Tests</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />
+</head>
+​
+<body>
+  <!-- Mocha setup -->
+  <div id="mocha"></div>
+  <script src="https://unpkg.com/chai/chai.js"></script>
+  <script src="https://unpkg.com/mocha/mocha.js"></script>
+​
+  <script class="mocha-init">
+    mocha.setup('bdd');
+    mocha.checkLeaks();
+  </script>
+​
+  <!-- Main code -->
+  <script>
+    // write your code here
+    class Connect4 {
+        constructor() {
+            this.grid = new Array(6);
+            for (let x = 0; x < this.grid.length; x++) {
+                this.grid[x] = ['-', '-', '-', '-', '-', '-', '-'];
+            }
+            
+        }
+
+        chooseColumn(col) {
+            this.chosenColumn = col;
+            let lowestRowAvailable;
+            const isolatedColumn = this.lookAtColumn(col);
+            let row;
+            for (row = isolatedColumn.length - 1; row > 0; row--) {
+                if (isolatedColumn[row] == '-') {
+                    lowestRowAvailable = row;
+                    break;  
+                }
+            }
+
+            this.grid[lowestRowAvailable][this.chosenColumn - 1] = 'B';
+            //this.grid[5][this.chosenColumn - 1] = 'B';
+        }
+
+        lookAtColumn(col) {
+            let isolatedColumn = [];
+            for (let row = 0; row < 6; row++) {
+                isolatedColumn.push(this.grid[row][col - 1]);
+            }
+            return isolatedColumn;
+        }
+
+       
+
+        showGrid() {
+            return this.grid;
+        }
+
+        randomColNumber() {
+            return Math.floor(Math.random() * 7) + 1;
+        }
+
+        computersTurn() {
+            this.col = this.randomColNumber();
+            let lowestRowAvailable;
+            const isolatedColumn = this.lookAtColumn(this.col);
+            let row;
+            for (row = isolatedColumn.length - 1; row > 0; row--) {
+                if (isolatedColumn[row] == '-') {
+                    lowestRowAvailable = row;
+                    break;  
+                }
+            }
+            this.grid[lowestRowAvailable][this.col - 1] = 'B';
+            //this.grid[5][this.col - 1] = 'R';
+        }
+
+        detectIfWon() {
+            let currentGrid = this.showGrid();
+
+        }
+    }
+
+
+
+
+  </script>
+​
+  <!-- tests -->
+  <script>
+    const expect = chai.expect
+  </script>
+  <script>
+    // write your tests here
+
+    //In a new round
+    //COMMAND: user picks a column
+    describe('user picks a column', () => {
+        it('will find the relevant location on grid and mark with B for blue, assuming first move', () => {
+            let game = new Connect4;
+            game.chooseColumn(3);
+            expect(game.grid[5][2]).to.equal('B');
+        })
+
+        it('will find the relevant location on grid and mark with B for blue, assuming space in row 5 is not available', () => {
+            let game = new Connect4;
+            game.chooseColumn(3);
+            game.chooseColumn(3);
+            expect(game.grid[4][2]).to.equal('B');
+        })
+    })
+
+    //COMMAND: computer randomly generates a column
+    describe("computer picks a column", () => {
+        it("will find the relevant location on grid and mark with R for red", () => {
+            let game = new Connect4;
+            game.computersTurn(4);
+            expect(game.grid[5][3]).to.equal('R');
+        })
+
+        it('will find the relevant location on grid and mark with B for blue, assuming space in row 5 is not available', () => {
+            let game = new Connect4;
+            game.computersTurn();
+            game.computersTurn();
+            expect(game.grid[4][3]).to.equal('R'); //how do I test randomly generated numbers that I want to be the same?
+        })
+    })
+
+    //QUERY: grid returned
+    describe('returns the grid', () => {
+        it('will return the current state of the grid', () => {
+            let game = new Connect4;
+            expect(game.showGrid()).to.deep.equal([
+                ['-', '-', '-', '-', '-', '-', '-'],
+                ['-', '-', '-', '-', '-', '-', '-'],
+                ['-', '-', '-', '-', '-', '-', '-'],
+                ['-', '-', '-', '-', '-', '-', '-'],
+                ['-', '-', '-', '-', '-', '-', '-'],
+                ['-', '-', '-', '-', '-', '-', '-']
+            ])
+        })
+    })
+
+    describe('detects if a player has won', () => {
+        it('will check if there are 4 Bs side by side horizontally', () => {
+            let game = new Connect4;
+            game.chooseColumn(1);
+            game.chooseColumn(2);
+            game.chooseColumn(3);
+            game.chooseColumn(4);
+            expect(game.detectIfWon()).to.be.true;
+        })
+
+        it('will check if there are 4 Bs side by side vertically', () => {
+            let game = new Connect4;
+            game.chooseColumn(3);
+            game.chooseColumn(3);
+            game.chooseColumn(3);
+            game.chooseColumn(3);
+            expect(game.detectIfWon()).to.be.true;
+        })
+
+        it('will check if there are 4 Rs side by side horizontally', () => {
+            
+        })
+
+        it('will check if there are 4 Rs side by side vertically', () => {
+            
+        })
+    })
+
+
+  </script>
+  <script class="mocha-exec">
+    mocha.run();
+  </script>
+</body>
+​
+</html>
